@@ -147,13 +147,23 @@ class Idcard extends Component {
 			}).then( (res) => res.json() ).then( (response) => {
 				console.log(response);
 				if(response['err_no'] == 0){
-					if(this.props.orderID == undefined){
-						Actions.xin({reset: true});
-						Actions.reset('xin');
-					}else{
-						Actions.main({'tost': false});
-						Actions.sign({'orderID': this.props.orderID});
-					}
+					Alert.alert(
+                        i18n.t('credit.alert'),
+                        i18n.t('credit.alerttext'),
+                        [
+                            {text: 'OK', onPress: () => {
+                            	if(this.props.orderID == undefined){
+									Actions.xin({reset: true});
+									Actions.reset('xin');
+								}else{
+									Actions.main({'tost': false});
+									Actions.reset('main');
+									Actions.sign({'orderID': this.props.orderID});
+								}
+                            }},
+                        ],
+                        { cancelable: false }
+                    )
 				}
 			} )
 		}

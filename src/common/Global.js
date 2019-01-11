@@ -56,6 +56,9 @@ global.phone = (phoneNum) => {
     return true;
 }
 
+// 全局验证输入框只能输入纯数字
+global.number = /[^\d]+/;
+
 // 全局正则表达式验证香港身份证
 global.HKID = (str) => {
     var strValidChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

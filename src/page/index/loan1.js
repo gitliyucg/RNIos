@@ -221,7 +221,7 @@ class Loan1 extends Component{
 					{/*贷款金额*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan1.price') }</Text>
-						<TextInput style={styles.input} editable={ !this.state.isPrice } value={this.state.price} onChangeText={ (value) => this.setState({price: value}) } keyboardType="numeric" placeholder={ i18n.t('loan1.pricep') }/>
+						<TextInput style={styles.input} editable={ !this.state.isPrice } value={this.state.price} onChangeText={ (value) => this.setState({price: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan1.pricep') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.price != null && this.state.price != '' ? succIcon : null }
 						</View>

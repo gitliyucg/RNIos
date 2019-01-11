@@ -18,7 +18,9 @@ export default {
 		title: '信用',
 		text: '上傳資料賺取信用積分',
 		firm: '華泰財務國際有限公司',
-		btn: '立刻上傳'
+		btn: '立刻上傳',
+		alert: '提示',
+		alerttext: '上传成功'
 	},
 	main: {
 		title: '我的',
@@ -46,7 +48,8 @@ export default {
 		getma: '獲取驗證碼',
 		btn: '立即拿錢',
 		xieyi: '註冊即代表我已閱讀并同意',
-		xieyi2: '《註冊協議》'
+		xieyi2: '《註冊協議》',
+		alert: '提示'
 	},
 	loan1: {
 		wu: '無抵押貸款',
@@ -255,7 +258,12 @@ export default {
 		msgto: '再寄密碼',
 		back: '回去貸款協議',
 		ok: '簽署及確認',
-		qshy: '請簽署合約'
+		qshy: '請簽署合約',
+		alert1: '請前往上傳身份認證',
+		alert2: '身份認證正在審核中，請稍後',
+		alert3: '請上傳手持身份證照片',
+		succ: '签字成功',
+		msg: '验证码已发送至您的手机，请注意查收'
 	},
 	order: {
 		order: '訂單編號：',

@@ -31,23 +31,17 @@ export default class Main extends Component {
 
     get = () => {
         // 获取用户详情
-        Storage.get('id').then( (response) => {
-            if(response != null){
-                fetch(API('/users/detail'), {
-                    method: 'POST',
-                    body: signData({
-                        id: response
-                    })
-                }).then( (res) => res.json() ).then( (response) => {
-                    if(response['err_no'] == 0){
-                        this.setState({
-                            user: response['results'],
-                            mobile: response['results']['mobile'],
-                            thumb: response['results']['thumb'],
-                            pic: response['results']['pic'],
-                        })
-                    }
-                } )
+        fetch(API('/users/detail'), {
+            method: 'POST',
+            body: signData()
+        }).then( (res) => res.json() ).then( (response) => {
+            if(response['err_no'] == 0){
+                this.setState({
+                    user: response['results'],
+                    mobile: response['results']['mobile'],
+                    thumb: response['results']['thumb'],
+                    pic: response['results']['pic'],
+                })
             }
         } )
         // 获取订单详情

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { styles } from "../../static/style/other_style.js"
 import { Actions } from 'react-native-router-flux';
 import Header from "../../common/Header";
@@ -123,13 +123,23 @@ export default class Other extends Component {
 			body: signData(params)
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
-				if(this.props.orderID == undefined){
-					Actions.xin({reset: true})
-					Actions.reset('xin');
-				}else{
-					Actions.main({'tost': false});
-					Actions.sign({'orderID': this.props.orderID});
-				}
+				Alert.alert(
+                    i18n.t('credit.alert'),
+                    i18n.t('credit.alerttext'),
+                    [
+                        {text: 'OK', onPress: () => {
+                        	if(this.props.orderID == undefined){
+								Actions.xin({reset: true});
+								Actions.reset('xin');
+							}else{
+								Actions.main({'tost': false});
+								Actions.reset('main');
+								Actions.sign({'orderID': this.props.orderID});
+							}
+                        }},
+                    ],
+                    { cancelable: false }
+                )
 			}
 		} )
 	}

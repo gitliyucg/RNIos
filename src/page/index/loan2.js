@@ -319,7 +319,7 @@ class Loan2 extends Component{
 					{/*住宅电话*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan2.dh') }</Text>
-						<TextInput style={styles.input} defaultValue={this.state.dh} onChangeText={ (value) => this.setState({dh: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.dhp') }/>
+						<TextInput style={styles.input} value={this.state.dh} onChangeText={ (value) => this.setState({dh: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.dhp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.dh != null && this.state.dh != '' ? succIcon : null }
 						</View>
@@ -348,7 +348,7 @@ class Loan2 extends Component{
 					{/*按揭供款*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan2.gk') }</Text>
-						<TextInput style={styles.input} defaultValue={this.state.gk} onChangeText={ (value) => this.setState({gk: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gkp') }/>
+						<TextInput style={styles.input} value={this.state.gk} onChangeText={ (value) => this.setState({gk: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gkp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.gk != null && this.state.gk != '' ? succIcon : null }
 						</View>
@@ -372,7 +372,7 @@ class Loan2 extends Component{
 						{/*房屋面积*/}
 						<View style={styles.inputwrap}>
 							<Text style={styles.label}>{ i18n.t('loan2.mj') }</Text>
-							<TextInput style={styles.input} defaultValue={this.state.mj} onChangeText={ (value) => this.setState({mj: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.mjp') }/>
+							<TextInput style={styles.input} value={this.state.mj} onChangeText={ (value) => this.setState({mj: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.mjp') }/>
 							<View style={styles.stateiconwrap}> 
 								{ this.state.mj != null && this.state.mj != '' ? succIcon : null }
 							</View>
@@ -380,7 +380,7 @@ class Loan2 extends Component{
 						{/*楼龄*/}
 						<View style={styles.inputwrap}>
 							<Text style={styles.label}>{ i18n.t('loan2.ll') }</Text>
-							<TextInput style={styles.input} defaultValue={this.state.ll} onChangeText={ (value) => this.setState({ll: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.llp') }/>
+							<TextInput style={styles.input} value={this.state.ll} onChangeText={ (value) => this.setState({ll: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.llp') }/>
 							<View style={styles.stateiconwrap}> 
 								{ this.state.ll != null && this.state.ll != '' ? succIcon : null }
 							</View>
@@ -407,8 +407,8 @@ class Loan2 extends Component{
 										<TextInput 
 											editable={ this.state.fuzk == null || this.state.fuzk == true ? false : true }
 											style={{width: 50, height: 20, padding: 0, borderBottomWidth: 1, borderBottomColor: '#d2d2d2'}} 
-											defaultValue={this.state.zujin} 
-											onChangeText={ (value) => this.setState({zujin: value}) } 
+											value={this.state.zujin} 
+											onChangeText={ (value) => this.setState({zujin: value.replace(number, '')}) } 
 											keyboardType="numeric" 
 											/>
 										<Text>)</Text>
@@ -436,8 +436,8 @@ class Loan2 extends Component{
 											<TextInput 
 												editable={ this.state.fuzx == null || this.state.fuzx != 0 ? false : true }
 												style={{width: 80, height: 20, padding: 0, borderBottomWidth: 1, borderBottomColor: '#d2d2d2'}} 
-												defaultValue={this.state.zx1} 
-												onChangeText={ (value) => this.setState({zx1: value}) } 
+												value={this.state.zx1} 
+												onChangeText={ (value) => this.setState({zx1: value.replace(number, '')}) } 
 												keyboardType="numeric" 
 												/>
 											<Text>)</Text>
@@ -456,8 +456,8 @@ class Loan2 extends Component{
 											<TextInput 
 												editable={ this.state.fuzx == null || this.state.fuzx != 1 ? false : true }
 												style={{width: 80, height: 20, padding: 0, borderBottomWidth: 1, borderBottomColor: '#d2d2d2'}} 
-												defaultValue={this.state.zx2} 
-												onChangeText={ (value) => this.setState({zx2: value}) } 
+												value={this.state.zx2} 
+												onChangeText={ (value) => this.setState({zx2: value.replace(number, '')}) } 
 												keyboardType="numeric" 
 												/>
 											<Text>)</Text>
@@ -476,8 +476,8 @@ class Loan2 extends Component{
 											<TextInput 
 												editable={ this.state.fuzx == null || this.state.fuzx != 2 ? false : true }
 												style={{width: 80, height: 20, padding: 0, borderBottomWidth: 1, borderBottomColor: '#d2d2d2'}} 
-												defaultValue={this.state.zx3} 
-												onChangeText={ (value) => this.setState({zx3: value}) } 
+												value={this.state.zx3} 
+												onChangeText={ (value) => this.setState({zx3: value.replace(number, '')}) } 
 												keyboardType="numeric" 
 												/>
 											<Text>)</Text>
@@ -496,8 +496,8 @@ class Loan2 extends Component{
 											<TextInput 
 												editable={ this.state.fuzx == null || this.state.fuzx != 3 ? false : true }
 												style={{width: 80, height: 20, padding: 0, borderBottomWidth: 1, borderBottomColor: '#d2d2d2'}} 
-												defaultValue={this.state.zx4} 
-												onChangeText={ (value) => this.setState({zx4: value}) } 
+												value={this.state.zx4} 
+												onChangeText={ (value) => this.setState({zx4: value.replace(number, '')}) } 
 												keyboardType="numeric" 
 												/>
 											<Text>)</Text>
@@ -575,7 +575,7 @@ class Loan2 extends Component{
 					{/*公司电话*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan2.gsphone') }</Text>
-						<TextInput style={styles.input} defaultValue={this.state.gsphone} onChangeText={ (value) => this.setState({gsphone: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gsphonep') }/>
+						<TextInput style={styles.input} value={this.state.gsphone} onChangeText={ (value) => this.setState({gsphone: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gsphonep') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.gsphone != null && this.state.gsphone != '' ? succIcon : null }
 						</View>
@@ -583,7 +583,7 @@ class Loan2 extends Component{
 					{/*收入*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan2.sr') }</Text>
-						<TextInput style={styles.input} defaultValue={this.state.sr} onChangeText={ (value) => this.setState({sr: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.srp') }/>
+						<TextInput style={styles.input} value={this.state.sr} onChangeText={ (value) => this.setState({sr: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.srp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.sr != null && this.state.sr != '' ? succIcon : null }
 						</View>
@@ -639,11 +639,11 @@ class Loan2 extends Component{
 						<View style={styles.yearwrap}>
 							<View style={{flexDirection: 'row'}}>
 								<View style={styles.y}>
-									<TextInput defaultValue={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
+									<TextInput value={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
 									<Text>年</Text>
 								</View>
 								<View style={styles.m}>
-									<TextInput defaultValue={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
+									<TextInput value={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
 									<Text>月</Text>
 								</View>
 							</View>

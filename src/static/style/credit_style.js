@@ -93,6 +93,18 @@ export let styles = StyleSheet.create({
     	alignItems: 'center',
     	justifyContent: 'center'
     },
+    listbtnnone: {
+        width: 70,
+        height: 25,
+        borderRadius: 20,
+        backgroundColor: '#A5A7A9',
+        color: '#ffffff',
+        textAlign: 'center',
+        lineHeight: 25,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
     btntext: {
     	fontSize: 12,
     	color: '#ffffff'

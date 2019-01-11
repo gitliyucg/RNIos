@@ -14,7 +14,8 @@ class Credit extends Component {
 
         this.state = {
             token: null,
-            list: []
+            list: [],
+            info: {}
         }
     }
 
@@ -23,6 +24,17 @@ class Credit extends Component {
     }
 
     get = () => {
+        // 获取个人信息
+        fetch(API('/users/detail'), {
+            method: 'POST',
+            body: signData()
+        }).then( (res) => res.json() ).then( (response) => {
+            if(response['err_no'] == 0){
+                this.setState({
+                    info: response['results']
+                })
+            }
+        } )
         // 获取认证列表
         fetch(API('/authenticationscategorys/'), {
             method: 'POST',
@@ -45,7 +57,7 @@ class Credit extends Component {
                     <Text numberOfLines={1}>{ LAN ? item.name : item.name_en }</Text>
                     <Text numberOfLines={1} style={styles.texthui}>{ LAN ? item.description : item.description_en }</Text>
                 </View>
-                <TouchableOpacity style={styles.listbtn} onPress={ () => this.toUpload(item.id, item.authentication_id, LAN ? item.name : item.name_en) }>
+                <TouchableOpacity disabled={item.authentication_id > 0} style={[item.authentication_id > 0 ? styles.listbtnnone : styles.listbtn]} onPress={ () => this.toUpload(item.id, item.authentication_id, LAN ? item.name : item.name_en) }>
                     <Text style={styles.btntext}>{ i18n.t('credit.btn') }</Text>
                 </TouchableOpacity>
             </View>
@@ -85,10 +97,10 @@ class Credit extends Component {
                     <View style={styles.kawrap}>
                         <Image style={styles.ka} source={require("../../static/images/kax3.png")}/>
                         <Text style={styles.firm}>{ i18n.t('credit.firm') }</Text>
-                        <Text style={styles.jifen}>200</Text>
-                        <Text style={styles.account}>1000 1000 1000 1000</Text>
-                        <Text style={styles.date}>Evaluated 2018 Aug 21</Text>
-                        <Text style={styles.name}>CARDHOLDER NAME</Text>
+                        <Text style={styles.jifen}>{this.state.info['credits']}</Text>
+                        <Text style={styles.account}>{this.state.info['card_num']}</Text>
+                        <Text style={styles.date}>{this.state.info['create_time_str']}</Text>
+                        <Text style={styles.name}>{this.state.info['last_name']} {this.state.info['first_name']}</Text>
                     </View>
                 </View>
                 <View style={[bodyContent, styles.titlewrap, {marginTop: 35,}]}>

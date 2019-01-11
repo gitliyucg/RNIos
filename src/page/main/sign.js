@@ -4,6 +4,8 @@ import { Actions } from 'react-native-router-flux';
 import { styles } from "../../static/style/sign_style";
 import Header from "../../common/Header";
 import Sound from 'react-native-sound';
+import { option } from "../../common/uploadConfig";
+import ImagePicker from "react-native-image-picker";
 
 let audio, time, Time, width, imgHeight;
 
@@ -13,6 +15,10 @@ export default class Sign extends Component {
 	  	super(props);
 	
 	  	this.state = {
+	  		mobile: null,
+	  		name: null,
+	  		bankname: null,
+	  		bankbumber: null,
 	  		ok: false,
 	  		isSign: false,
 	  		msg: '',
@@ -24,17 +30,44 @@ export default class Sign extends Component {
 	  		upList: [],
 	  		upLength: null,
 	  		img: null,
-	  		imgurls: []
+	  		imgurls: [],
+	  		idUrl: null,
+	  		idPic: {}
 	  	};
 	}
 
 	componentDidMount(){
+		//获取個人信息
+        fetch(API('/users/detail'), {
+            method: 'POST',
+            body: signData()
+        }).then( (res) => res.json() ).then( (response) => {
+            if(response['err_no'] == 0){
+                this.setState({
+                    mobile: response['results']['mobile'],
+                    name: response['results']['last_name'] + response['results']['first_name'],
+                })
+            }
+        } )
+        //獲取銀行信息
+        fetch(API('/authentications/bank'), {
+        	method: 'POST',
+        	body: signData()
+        }).then( (res) => res.json() ).then( (response) => {
+        	if(response['err_no'] == 0){
+        		this.setState({
+        			bankname: response['results'][0]['input1'], 
+        			bankbumber: response['results'][0]['input2'] 
+        		})
+        	}
+        } )
 		// 获取订单详情
 		fetch(API('/order/detail'), {
 			method: 'POST',
 			body: signData({order_id: this.props.orderID})
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
+				console.log(response);
 				this.setState({
 					info: response['results'],
 				})
@@ -102,7 +135,6 @@ export default class Sign extends Component {
 				this.setState({
 					imgurls: arr
 				})
-				console.log(this.state.imgurls);
 			}
 		} )
 	}
@@ -116,24 +148,138 @@ export default class Sign extends Component {
 	upHtml = () => {
 		return this.state.upList.map( (item, index) => {
 			return(
-				<TouchableOpacity style={styles.uploadchild} onPress={() => this.toUp(item.id, item.name)}>
+				<TouchableOpacity style={styles.uploadchild} onPress={() => this.toUp(item.id, item.name, item.authentication_id)}>
 					<Text style={{color: '#fff'}}>{item.name}</Text>
 				</TouchableOpacity>
 			)
 		} )
 	}
 
-	toUp = (ID, name) => {
+	toUp = (ID, name, UID) => {
 		if (ID == 1) {
-			Actions.idcard({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id']});
+			Actions.idcard({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id'], 'uid': UID});
 		}else if(ID == 2){
-			Actions.bank({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id']});
+			Actions.bank({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id'], 'uid': UID});
 		}else{
-			Actions.other({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id']});
+			Actions.other({'id': ID, 'titleName': name, 'orderID': this.state.info['order_id'], 'uid': UID});
 		}
 	}
 
+	// 上传手持身份證图片
+	uploadImg = () => {
+		ImagePicker.showImagePicker(option, (response) => {
+			if(response.didCancel){
+				return false;
+			}
+			let from = signData();
+			from.append('name', 'img');
+			from.append('is_thumb', 1);
+			from.append('img', {uri: response['uri'], type: 'multiline/form-data', name: 'images.jpeg'});
+			//上传
+			fetch(API('/upload/'), {
+				method: 'POST',
+				headers:{
+			      	'Content-Type':'multipart/form-data',
+		      	},
+				body: from
+			}).then( (res) => res.json() ).then( (response) => {
+				if(response['err_no'] == 0){
+					this.setState({
+						idUrl: response['results']['url_temp'],
+						idPic: response
+					})
+				}
+			} )
+		})
+	}
+
+	sign = () => {
+		let upArr = [];
+		let exArr = [];
+		this.state.upList.map( (item, index) => {
+			upArr.push(item['authentication_id']);
+			exArr.push(item['examine_status']);
+		} );
+		let up = upArr.every( (item, index, arr) => {
+			return item > 0;
+		} );
+		let ex = upArr.every( (item, index, arr) => {
+			return item == 1;
+		} );
+		if(this.state.upLength != 0){
+			if(!up){
+				Alert.alert(i18n.t('sign.alert1'));
+				return false;
+			}else if(!ex){
+				Alert.alert(i18n.t('sign.alert2'));
+				return false;
+			}
+		}else if(this.state.idPic.length == 0){
+			Alert.alert(i18n.t('sign.alert3'));
+			return false;
+		}else{
+			fetch(API('/sendsms/sendsms'), {
+				method: 'POST',
+				body: signData({
+					mobile: this.state.mobile,
+					contentcode: 'sms_verify_signing'
+				})
+			}).then( (res) => res.json() ).then( (response) => {
+				if(response['err_no'] == 0){
+					console.log(response);
+					Alert.alert(i18n.t('sign.msg'));
+					this.setState({isSign: true})
+				}else{
+					Alert.alert(response['err_msg'])
+				}
+			} )
+		}
+	}
+
+	againMsg = () => {
+		fetch(API('/sendsms/sendsms'), {
+			method: 'POST',
+			body: signData({
+				mobile: this.state.mobile,
+				contentcode: 'sms_verify_signing'
+			})
+		}).then( (res) => res.json() ).then( (response) => {
+			if(response['err_no'] == 0){
+				console.log(response);
+				Alert.alert(i18n.t('sign.msg'));
+			}else{
+				Alert.alert(response['err_msg'])
+			}
+		} )
+	}
+
 	onsubmit = () => {
+		let params = {
+			order_id: this.props.orderID,
+			is_sign: 1,
+			pic_json: JSON.stringify(this.state.idPic),
+			verify: this.state.msg
+		}
+		fetch(API('/order/sign'), {
+			method: 'POST',
+			body: signData(params)
+		}).then( (res) => res.json() ).then( (response) => {
+			if(response['err_no'] == 0){
+				Alert.alert(
+                    i18n.t('main.alert'),
+                    i18n.t('sign.succ'),
+                    [
+                        {text: 'OK', onPress: () => {
+                        	Actions.main();
+                        	Actions.reset('main');
+                        }},
+                    ],
+                    { cancelable: false }
+                )
+			}else{
+				Alert.alert(response['err_msg'])
+			}
+		} )
 	}
 
 	signComponent = () => {
@@ -256,8 +402,12 @@ export default class Sign extends Component {
 					</View>
 				</View>
 				<View style={styles.upid}>
-					<TouchableOpacity>
-						<Image style={styles.upidimg} source={require('../../static/images/idx3.png')} />
+					<TouchableOpacity onPress={ this.uploadImg }>
+						{
+							this.state.idUrl == null ? 
+							<Image style={styles.upidimg} source={require('../../static/images/idx3.png')} /> :
+							<Image style={styles.upidimg} source={{uri: this.state.idUrl}} />
+						}
 					</TouchableOpacity>
 					<Text style={{marginLeft: 15, flex: 1}} numberOfLines={3}>{i18n.t('sign.up')}</Text>
 				</View>
@@ -276,7 +426,7 @@ export default class Sign extends Component {
 				<View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 25}}>
 					<TouchableOpacity
 					disabled={!this.state.ok}
-					onPress={ () => this.setState({isSign: true}) } style={{width: 170, height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f7ba14', borderRadius: 10}}>
+					onPress={ () => this.sign() } style={{width: 170, height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f7ba14', borderRadius: 10}}>
 						<Text style={{color: '#fff'}}>{ i18n.t('sign.btn') }</Text>
 					</TouchableOpacity>
 				</View>
@@ -299,19 +449,19 @@ export default class Sign extends Component {
 				<View style={styles.gkinfo}>
 					<View style={styles.gkinfochild}>
 						<Text style={styles.gkinfotext}>{ i18n.t('sign.fs') }</Text>
-						<Text style={styles.gkinfotext}>供款方式</Text>
+						<Text style={styles.gkinfotext}></Text>
 					</View>
 					<View style={styles.gkinfochild}>
 						<Text style={styles.gkinfotext}>{ i18n.t('sign.zzyh') }</Text>
-						<Text style={styles.gkinfotext}>供款方式</Text>
+						<Text style={styles.gkinfotext}>{this.state.bankname}</Text>
 					</View>
 					<View style={styles.gkinfochild}>
 						<Text style={styles.gkinfotext}>{ i18n.t('sign.zzhk') }</Text>
-						<Text style={styles.gkinfotext}>供款方式</Text>
+						<Text style={styles.gkinfotext}>{this.state.bankbumber}</Text>
 					</View>
 					<View style={styles.gkinfochild}>
 						<Text style={styles.gkinfotext}>{ i18n.t('sign.zzr') }</Text>
-						<Text style={styles.gkinfotext}>供款方式</Text>
+						<Text style={styles.gkinfotext}>{this.state.name}</Text>
 					</View>
 				</View>
 				<Text style={styles.toptitle}>{ i18n.t('sign.sign2') }</Text>
@@ -328,7 +478,7 @@ export default class Sign extends Component {
 					</View>
 				</View>
 				<Text style={{marginTop: 15, marginBottom: 15, textAlign: 'center'}}>{ i18n.t('sign.msgno') }</Text>
-				<TouchableOpacity><Text style={{textAlign: 'center'}}>{ i18n.t('sign.msgto') }</Text></TouchableOpacity>
+				<TouchableOpacity onPress={() => this.againMsg()}><Text style={{textAlign: 'center'}}>{ i18n.t('sign.msgto') }</Text></TouchableOpacity>
 				<View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 25, marginBottom: 25}}>
 					<TouchableOpacity onPress={ () => this.setState({isSign: false}) } style={{width: 170, height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', borderRadius: 10}}>
 						<Text style={{color: '#f7ba14'}}>{ i18n.t('sign.back') }</Text>

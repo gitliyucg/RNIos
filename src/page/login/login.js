@@ -66,7 +66,6 @@ class Login extends Component{
 			method: 'POST',
 			body: signData(params)
 		}).then( (res) => res.json() ).then( (response) => {
-			console.log(response);
 			if( response['err_no'] == 0 ){
 				Storage.save('id', response['results']['id']);
 				Storage.save('mobile', response['results']['mobile']);
@@ -74,6 +73,8 @@ class Login extends Component{
 				token = response['results']['token'];
 				Actions.main({'mobile': response['results']['mobile']});
 				Actions.reset('main');
+			}else{
+				Alert.alert(response['err_msg']);
 			}
 		} )
 	}

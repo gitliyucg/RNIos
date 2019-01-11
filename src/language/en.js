@@ -18,7 +18,9 @@ export default {
 		title: 'Credit',
 		text: 'Upload data to earn credit points',
 		firm: 'Grand Prospects',
-		btn: 'Upload'
+		btn: 'Upload',
+		alert: 'Tips',
+		alerttext: 'Upload success'
 	},
 	main: {
 		title: 'Main',
@@ -46,7 +48,8 @@ export default {
 		getma: 'Get code',
 		btn: 'Get the money right away.',
 		xieyi: 'Registration means that I have read and agreed.',
-		xieyi2: '《Registration Agreement》'
+		xieyi2: '《Registration Agreement》',
+		alert: 'Tips'
 	},
 	loan1: {
 		wu: 'Unsecured loan',
@@ -255,7 +258,12 @@ export default {
 		msgto: 'Send the password again.',
 		back: 'Back to Loan Agreement',
 		ok: 'Signature and confirmation',
-		qshy: 'Please sign the contract.'
+		qshy: 'Please sign the contract.',
+		alert1: 'Please go to upload identity authentication',
+		alert2: 'Authentication is under review. Please wait a moment.',
+		alert3: 'Please upload photos with your ID card',
+		succ: 'Signed successfully',
+		msg: 'The verification code has been sent to your mobile phone. Please check it carefully.'
 	},
 	order: {
 		order: 'Order number :',
