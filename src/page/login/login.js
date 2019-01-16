@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, TextInput, A
 import { styles } from "../../static/style/login_style.js"
 import { Actions } from 'react-native-router-flux';
 import makeCancelable from "../../common/Cancelable";
+import JPushModule from 'jpush-react-native'
 
 let Time = null;
 
@@ -51,7 +52,11 @@ class Login extends Component{
 				method: 'POST',
 				body: signData(params)
 			}).then( (res) => res.json() ).then( (response) => {
-				console.log(response);
+				if (response['err_no'] == 0) {
+					console.log(response);
+				}else{
+					Alert.alert(response['err_msg'])
+				}
 			} )
 		}
 	}
@@ -60,7 +65,8 @@ class Login extends Component{
 		// 登录
 		let params = {
 			mobile: this.state.phone,
-			verify: this.state.ma
+			verify: this.state.ma,
+			registration_id: PushID
 		}
 		fetch(API('/users/login'), {
 			method: 'POST',

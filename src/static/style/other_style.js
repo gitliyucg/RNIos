@@ -39,5 +39,12 @@ export let styles = StyleSheet.create({
 		marginTop: 20,
 		marginBottom: 20,
 		borderRadius: 5
+	},
+	deleteicon: {
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		width: 20,
+		height: 20
 	}
 })

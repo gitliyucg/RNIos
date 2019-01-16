@@ -18,7 +18,9 @@ class Idcard extends Component {
 	  		back: null,
 	  		id: null, //判断上传的是正面还是反面
 	  		pic: [],
-	  		isBtn: false
+	  		isBtn: false,
+	  		type: null,
+	  		text: null
 	  	};
 	}
 
@@ -31,10 +33,15 @@ class Idcard extends Component {
 			})
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
+				let arr = this.state.pic;
+				arr[0] = JSON.parse(response['results']['Images'][0]['pic_json'])
+				arr[1] = JSON.parse(response['results']['Images'][1]['pic_json'])
 				this.setState({
 					just: response['results']['Imgs'][0]['url'],
 					back: response['results']['Imgs'][1]['url'],
-					isBtn: true
+					type: response['results']['examine_status'],
+					text: response['results']['examine_reason'],
+					pic: arr
 				})
 			}
 		} )
@@ -145,7 +152,6 @@ class Idcard extends Component {
 				method: 'POST',
 				body: signData(params)
 			}).then( (res) => res.json() ).then( (response) => {
-				console.log(response);
 				if(response['err_no'] == 0){
 					Alert.alert(
                         i18n.t('credit.alert'),
@@ -164,6 +170,8 @@ class Idcard extends Component {
                         ],
                         { cancelable: false }
                     )
+				}else{
+					Alert.alert(response['err_msg'])
 				}
 			} )
 		}
@@ -205,6 +213,11 @@ class Idcard extends Component {
 						</TouchableOpacity>
 						<Text style={{marginLeft: 20}}>{ i18n.t('id.id2') }</Text>
 					</View>
+					{
+						this.state.type == 2 ?
+						<Text style={{marginLeft: 15, marginRight: 15, marginTop: 10}}>{i18n.t('order.bohui')}{this.state.text}</Text> :
+						null
+					}
 					<View style={styles.btnwrap}>
 						<TouchableOpacity disabled={this.state.isBtn} style={styles.btn} onPress={this.uploadBtn}>
 							<Text style={{color: '#fff'}}>{ i18n.t('bank.btn') }</Text>

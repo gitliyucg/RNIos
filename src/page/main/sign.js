@@ -195,23 +195,15 @@ export default class Sign extends Component {
 
 	sign = () => {
 		let upArr = [];
-		let exArr = [];
 		this.state.upList.map( (item, index) => {
 			upArr.push(item['authentication_id']);
-			exArr.push(item['examine_status']);
 		} );
 		let up = upArr.every( (item, index, arr) => {
 			return item > 0;
-		} );
-		let ex = upArr.every( (item, index, arr) => {
-			return item == 1;
-		} );
+		} )
 		if(this.state.upLength != 0){
 			if(!up){
 				Alert.alert(i18n.t('sign.alert1'));
-				return false;
-			}else if(!ex){
-				Alert.alert(i18n.t('sign.alert2'));
 				return false;
 			}
 		}else if(this.state.idPic.length == 0){

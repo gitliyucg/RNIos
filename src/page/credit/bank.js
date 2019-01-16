@@ -20,6 +20,8 @@ class Bank extends Component {
 	  		img: [],
 	  		isBtn: false,
 	  		imgurl: [],
+	  		type: null,
+	  		text: null
 	  	};
 	}
 
@@ -33,14 +35,20 @@ class Bank extends Component {
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
 				let arr = [];
+				let img = [];
 				response['results']['Imgs'].map( (item, index) => {
 					arr.push(item['url'])
+				} )
+				response['results']['Images'].map( (item, index) => {
+					img.push(JSON.parse(item['pic_json']))
 				} )
 				this.setState({
 					name: response['results']['input1'],
 					number: response['results']['input2'],
 					imgurl: arr,
-					isBtn: true
+					type: response['results']['examine_status'],
+					text: response['results']['examine_reason'],
+					img: img
 				})
 			}
 		} )
@@ -154,8 +162,21 @@ class Bank extends Component {
                     ],
                     { cancelable: false }
                 )
+			}else{
+				Alert.alert(response['err_msg'])
 			}
 		} )
+	}
+
+	Delete = (index) => {
+		let url = this.state.imgurl;
+		let img = this.state.img;
+		url.splice(index, 1)
+		img.splice(index, 1)
+		this.setState({
+			imgUrl: url,
+			img: img
+		})
 	}
 
 	uploadImgHtml = () => {
@@ -167,6 +188,9 @@ class Bank extends Component {
 				<View>
 					<Image style={styles.uploadimg} source={{uri: item}}/>
 					<Text style={styles.uploadtext}>{i18n.t('bank.num_start')}{index + 1}{i18n.t('bank.num_end')}</Text>
+					<TouchableOpacity style={styles.deleteicon} onPress={() => this.Delete(index)}>
+						<Image style={{width: 20, height: 20}} source={require('../../static/images/icon/delete.png')} />
+					</TouchableOpacity>
 				</View>
 			);
 		})
@@ -215,6 +239,11 @@ class Bank extends Component {
 							{ this.uploadImgHtml() }
 						</View>
 					</View>
+					{
+						this.state.type == 2 ?
+						<Text style={{marginLeft: 15, marginRight: 15, marginTop: 10}}>{i18n.t('order.bohui')}{this.state.text}</Text> :
+						null
+					}
 					<View style={styles.btnwrap}>
 						<TouchableOpacity disabled={this.state.isBtn || !this.state.ok} style={styles.btn} onPress={ this.uploadBtn }>
 							<Text style={{color: '#fff'}}>{ i18n.t('bank.btn') }</Text>

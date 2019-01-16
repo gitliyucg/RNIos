@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { styles } from "../../static/style/home_style.js"
 import { Actions } from 'react-native-router-flux';
 import Header from "../../common/Header";
+import JPushModule from 'jpush-react-native'
+import * as changeActions from '../../actions/lanActions';
+import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 class Home extends Component {
 
@@ -11,10 +15,24 @@ class Home extends Component {
 
         this.state = {
             list: [],
+            pushMsg: null
         }
     }
 
     componentDidMount () {
+
+        //获取RegistrationID  
+        JPushModule.getRegistrationID((id)=>{
+            if (id == '') {
+                if (LAN) {
+                    this.props.actions.changeZh()
+                }else{
+                    this.props.actions.changeEn()
+                }
+            }else{
+                PushID = id;
+            }
+        })
 
         // 首次进入判断是否重新加载
         Storage.get('token').then( (response) => {
@@ -102,7 +120,6 @@ class Home extends Component {
     }
 
     render(){
-
         return (
             <View style={[styles.container, main]}>
                 {/*头部组件*/}
@@ -136,4 +153,10 @@ class Home extends Component {
     
 }
 
-export default Home;
+export default connect(state => ({
+        state: state.changelan
+    }),
+    (dispatch) => ({
+        actions: bindActionCreators(changeActions, dispatch)
+    })
+)(Home);

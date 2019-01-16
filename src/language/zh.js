@@ -281,6 +281,7 @@ export default {
 		t6: '金額',
 		t7: '日期',
 		t8: '備註',
+		bohui: '駁回理由：'
 	},
 	mybank: {
 		title: '我的銀行卡',

@@ -281,6 +281,7 @@ export default {
 		t6: 'Amount',
 		t7: 'date',
 		t8: 'remark',
+		bohui: 'Reasons for rejection :'
 	},
 	mybank: {
 		title: 'My bank card',

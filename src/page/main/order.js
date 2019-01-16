@@ -91,6 +91,11 @@ export default class Order extends Component {
 						</View>
 						<Text style={styles.orderid}>{i18n.t('order.order')}{this.props.orderID}</Text>
 					</View>
+					{
+						this.props.orderType == 2 ? 
+						<Text style={{marginLeft: 15, marginRight: 15, marginTop: 10}}>{i18n.t('order.bohui')}{this.state.info['examine_reason']}</Text> :
+						null
+					}
 					<View style={styles.listinfo}>
 						<View style={[styles.infochild, styles.infochildcolor1]}>
 							<Text style={styles.label} numberOfLines={1}>{i18n.t('sign.name')}</Text>
