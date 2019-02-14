@@ -118,11 +118,11 @@ class Login extends Component{
 					<View style={styles.inputcont}>
 						<View style={styles.inputchild}>
 							<Text style={styles.label}>{ i18n.t('login.phone') }</Text>
-							<TextInput style={styles.logininput} onChangeText={ (value) => this.changePhone(value) } keyboardType="numeric" placeholder={ i18n.t('login.phoneplace') }/>
+							<TextInput returnKeyType="done" style={styles.logininput} onChangeText={ (value) => this.changePhone(value) } keyboardType="numeric" placeholder={ i18n.t('login.phoneplace') }/>
 						</View>
 						<View style={styles.inputchild}>
 							<Text style={styles.label}>{ i18n.t('login.ma') }</Text>
-							<TextInput style={styles.logininput} onChangeText={ (value) => this.changeMa(value) } keyboardType="numeric" placeholder={ i18n.t('login.maplace') }/>
+							<TextInput style={styles.logininput} returnKeyType="done" onChangeText={ (value) => this.changeMa(value) } keyboardType="numeric" placeholder={ i18n.t('login.maplace') }/>
 							<TouchableOpacity disabled={ this.state.getMa || !this.state.isPhone ? true : false } style={styles.mabtn} onPress={this.getCode}>
 								{this.state.getMa ? <Text>{ this.state.time + 's' }</Text> : <Text>{ i18n.t('login.getma') }</Text>}
 							</TouchableOpacity>

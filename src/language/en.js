@@ -81,7 +81,10 @@ export default {
 		xlp: 'Please choose the highest educational background.',
 		btn: 'Next step',
 		xinxi: 'Please enter the complete information.',
-		idnum: 'Please enter the correct ID number.'
+		idnum: 'Please enter the correct ID number.',
+		emailalert: 'Please enter the correct email address',
+		agealert: 'Borrowers must be at least 18 years of age and less than 100 years of age.',
+		pricealert: 'Please fill in the amount between 5000 and 50000.'
 	},
 	loan2: {
 		title1: 'Residential information',
@@ -141,7 +144,9 @@ export default {
 		xinx: 'Please enter the complete information.',
 		clfs1: 'Automatic transfer',
 		clfs2: 'Cash',
-		clfs3: 'Check'
+		clfs3: 'Check',
+		phonealert: 'Please enter the correct residential telephone number.',
+		phonealert2: 'Please enter the correct office phone number.'
 	},
 	list: {
 		ed: 'Limit',
@@ -207,7 +212,9 @@ export default {
 		title: 'Set up',
 		head: 'Setting up a head',
 		cache: 'Clear cache',
-		logout: 'Logout'
+		logout: 'Logout',
+		alert: 'Tips',
+		text: 'Successful clearance',
 	},
 	renzheng: {
 		title: 'My certification',
@@ -281,7 +288,13 @@ export default {
 		t6: 'Amount',
 		t7: 'date',
 		t8: 'remark',
-		bohui: 'Reasons for rejection :'
+		bohui: 'Reasons for rejection :',
+		date: 'Repayment date',
+		dateq: 'No. ',
+		dateh: ' per month',
+		account: 'Repayment account',
+		number: 'Repayment account',
+		bank: 'Opening bank'
 	},
 	mybank: {
 		title: 'My bank card',

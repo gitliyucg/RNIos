@@ -12,7 +12,6 @@ export let styles = StyleSheet.create({
 		color: '#fff'
 	},
 	inputwrap: {
-		height: 30,
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginLeft: 15,
@@ -56,7 +55,6 @@ export let styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: '#cdcdcd',
 		flex: 1,
-		lineHeight: 30,
 		padding: 0
 	},
 	stateiconwrap: {

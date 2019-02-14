@@ -37,7 +37,8 @@ class List extends Component{
 				'loan': 'wu',
 				'ID': this.state.ID,
 				'price': this.state.detail.price,
-				'month': this.state.detail.by_stages
+				'month': this.state.detail.by_stages,
+				'listTitle': LAN ? this.state.detail.title : this.state.detail.title_en
 			})
 		}
 	}

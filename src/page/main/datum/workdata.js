@@ -222,11 +222,11 @@ export default class Workdata extends Component {
 						<View style={styles.yearwrap}>
 							<View style={{flexDirection: 'row'}}>
 								<View style={styles.y}>
-									<TextInput defaultValue={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gzyear') }/>
+									<TextInput defaultValue={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value.replace(number, '') > 100 ? 0 : value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gzyear') }/>
 									<Text>年</Text>
 								</View>
 								<View style={styles.m}>
-									<TextInput defaultValue={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gzmm') }/>
+									<TextInput defaultValue={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value.replace(number, '') > 12 ? 0 : value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gzmm') }/>
 									<Text>月</Text>
 								</View>
 							</View>

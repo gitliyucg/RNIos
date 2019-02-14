@@ -56,7 +56,6 @@ export default class Personaldata extends Component {
 			method: 'POST',
 			body: signData()
 		}).then( (res) => res.json() ).then( (response) => {
-			console.log(response);
 			if(response['err_no'] == 0){
 				let value = '';
 				this.state.xlvalue.map( (item, index) => {
@@ -101,6 +100,29 @@ export default class Personaldata extends Component {
 		}else{
 			this.setState({
 				isPochan: false
+			})
+		}
+	}
+
+	// 身份证触焦事件
+	numberIDFocus = () => {
+		if(this.state.numberID != null || this.state.numberID != ''){
+			let ID = this.state.numberID;
+			if(ID.indexOf('(') > -1){
+				this.setState({
+					numberID: ID.split('(')[0] + ID.split('(')[1].split(')')[0]
+				})
+			}
+		}
+	}
+	// 身份证失焦事件
+	numberIDBlur = () => {
+		if(this.state.numberID != null || this.state.numberID != ''){
+			let ID = this.state.numberID;
+			IDend = ID.substr(ID.length - 1, 1);
+			IDstr = ID.substring(0, ID.length - 1);
+			this.setState({
+				numberID: IDstr + '(' + IDend + ')'
 			})
 		}
 	}
@@ -178,7 +200,7 @@ export default class Personaldata extends Component {
 					{/*身份证号码*/}
 					<View style={styles.inputwrap}>
 						<Text style={styles.label}>{ i18n.t('loan1.id') }</Text>
-						<TextInput defaultValue={this.state.numberID} style={styles.input} onChangeText={ (value) => this.setState({numberID: value}) } placeholder={ i18n.t('loan1.idp') }/>
+						<TextInput defaultValue={this.state.numberID} onBlur={ () => this.numberIDBlur() } onFocus={ () => this.numberIDFocus() } style={styles.input} onChangeText={ (value) => this.setState({numberID: value}) } placeholder={ i18n.t('loan1.idp') }/>
 					</View>
 					{/*邮箱*/}
 					<View style={styles.inputwrap}>

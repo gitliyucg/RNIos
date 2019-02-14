@@ -51,9 +51,8 @@ export let styles = StyleSheet.create({
 		left: (WIDTH - 30) / 2,
 		top: 12.5,
 		marginLeft: -95,
-		textAlign: 'center',
-		lineHeight: 190,
-		fontSize: 20,
-		color: '#000000'
-	}
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
 })

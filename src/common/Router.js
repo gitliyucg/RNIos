@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Alert, AppRegistry, Button, StyleSheet, View, Image } from 'react-native';
+import { Alert, AppRegistry, Button, StyleSheet, View, Image, findNodeHandle, UIManager } from 'react-native';
 import { Scene, Router, Actions, Reducer, ActionConst, Overlay, Tabs, Modal, Drawer, Stack, Lightbox, } from 'react-native-router-flux';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 
+// 引导页
+import Guide from "../page/components/guide";
 // 首页
 import Home from "../page/index/home";
+// 套餐詳情頁
 import List from "../page/index/list";
 // 贷款资料填写页面
 import Loan1 from "../page/index/loan1";
@@ -115,6 +118,7 @@ class Routers extends Component {
                         <Scene key="main" icon={ MainIcon } component={Main} title={ i18n.t('tabs.main') }/>
                     </Tabs>
                     <Scene hideNavBar key="login" component={Login}/>
+                    <Scene hideNavBar key="guide" component={Guide}/>
                     <Scene hideNavBar key="loan1" component={Loan1}/>
                     <Scene hideNavBar key="loan2" component={Loan2}/>
                     <Scene hideNavBar key="list" component={List}/>

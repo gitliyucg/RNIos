@@ -14,7 +14,10 @@ export default class Order extends Component {
 	  		title: null,
 	  		action: 0, //0為交易记录1为时间表3为减免优惠
 	  		info: {},
-	  		list: []
+	  		list: [],
+	  		account: null,
+	  		number: null,
+	  		bank: null
 	  	};
 	}
 
@@ -54,6 +57,30 @@ export default class Order extends Component {
 				})
 			}
 		} )
+		// 获取还款信息
+		let config = ['api_repayment_bank', 'api_repayment_account', 'api_repayment_company'];
+		config.map( (item, index) => {
+			fetch(API('/system/systemconfigsdetail'), {
+				method: 'POST',
+				body: signData({config_key: item})
+			}).then( (res) => res.json() ).then( (response) => {
+				if (response['err_no'] == 0) {
+					if(index == 0){
+						this.setState({
+							bank: response['results']['config_name']
+						})
+					}else if(index == 1){
+						this.setState({
+							number: response['results']['config_name']
+						})
+					}else if(index == 2){
+						this.setState({
+							account: response['results']['config_name']
+						})
+					}
+				}
+			} )
+		} )
 	}
 
 	orderHtml = (data) => {
@@ -65,8 +92,8 @@ export default class Order extends Component {
 					<View style={styles.orderlistwrap}>
 						<Text style={[styles.jilu1, styles.jianmodd]}>{item.stage}</Text>
 						<Text style={[styles.jilu2, styles.jianmeven]}>{item.date}</Text>
-						<Text style={[styles.jilu3, styles.jianmodd]}>{item.price}</Text>
-						<Text style={[styles.jilu4, styles.jianmeven]}>{item.total_price}</Text>
+						<Text style={[styles.jilu3, styles.jianmodd]}>{item.total_price_surplus}</Text>
+						<Text style={[styles.jilu4, styles.jianmeven]}>{item.total_price_surplus_interest}</Text>
 					</View>
 				)
 			} )
@@ -80,9 +107,11 @@ export default class Order extends Component {
 				<ScrollView style={{height: scrollViewHeight}}>
 					<View style={styles.listwrap}>
 						{
-							this.state.info['order_type'] == 0 ?
-							<Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> :
-							<Image style={styles.listimg} source={require('../../static/images/listyou.png')} />
+							this.state.info['set_meal_id'] != 0 ?
+							<Image style={styles.listimg} source={require('../../static/images/listtao.png')} /> :
+							(this.state.info['order_type'] == 0 ? <Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> : 
+							(this.state.info['order_type'] == 1 ? <Image style={styles.listimg} source={require('../../static/images/listyou.png')} /> : null)
+							)
 						}
 						<View style={styles.listcont}>
 							<Text style={styles.listtext}>{this.state.info.price}</Text>
@@ -129,19 +158,41 @@ export default class Order extends Component {
 							<Text style={styles.label} numberOfLines={1}>{i18n.t('sign.jkrq')}</Text>
 							<Text style={styles.labeltext}>{this.state.info['create_times']}</Text>
 						</View>
+						{/*還款信息*/}
+						<View style={[styles.infochild, styles.infochildcolor1]}>
+							<Text style={styles.label} numberOfLines={1}>{i18n.t('order.date')}</Text>
+							<Text style={styles.labeltext}>{i18n.t('order.dateq')}{this.state.info['repayment_date']}{i18n.t('order.dateh')}</Text>
+						</View>
+						<View style={[styles.infochild, styles.infochildcolor2]}>
+							<Text style={styles.label} numberOfLines={1}>{i18n.t('order.account')}</Text>
+							<Text style={styles.labeltext}>{this.state.account}</Text>
+						</View>
+						<View style={[styles.infochild, styles.infochildcolor1]}>
+							<Text style={styles.label} numberOfLines={1}>{i18n.t('order.number')}</Text>
+							<Text style={styles.labeltext}>{this.state.number}</Text>
+						</View>
+						{
+							this.state.bank == null ? 
+							null : 
+							<View style={[styles.infochild, styles.infochildcolor2]}>
+								<Text style={styles.label} numberOfLines={1}>{i18n.t('order.bank')}</Text>
+								<Text style={styles.labeltext}>{this.state.bank}</Text>
+							</View>
+						}
+						{/*還款信息*/}
 					</View>
 					<View style={styles.orderinfo}>
 						<View style={styles.orderchild}>
 							<Text style={{marginTop: 10}}>{i18n.t('order.all')}</Text>
-							<Text style={{marginTop: 15, fontSize: 16}}>5000</Text>
+							<Text style={{marginTop: 15, fontSize: 16}}>{this.state.info['price']}</Text>
 						</View>
 						<View style={styles.orderchild}>
 							<Text style={{marginTop: 10}}>{i18n.t('order.yih')}</Text>
-							<Text style={{marginTop: 15, fontSize: 16}}>5000</Text>
+							<Text style={{marginTop: 15, fontSize: 16}}>{this.state.info['total_reimbursement']}</Text>
 						</View>
 						<View style={styles.orderchild}>
 							<Text style={{marginTop: 10}}>{i18n.t('order.weih')}</Text>
-							<Text style={{marginTop: 15, fontSize: 16}}>5000</Text>
+							<Text style={{marginTop: 15, fontSize: 16}}>{this.state.info['total_no_repayment']}</Text>
 						</View>
 					</View>
 					<View style={styles.listchildwrap}>

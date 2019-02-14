@@ -1,8 +1,9 @@
-package com.awesomeproject;
+package com.rnandroid.daishuangapp;
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.mehcode.reactnative.splashscreen.SplashScreenPackage;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -26,13 +27,14 @@ public class MainApplication extends Application implements ReactApplication {
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+      return com.rnandroid.daishuang.BuildConfig.DEBUG;
     }
 
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SplashScreenPackage(),
             new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG),
             new RNSoundPackage(),
             new ImagePickerPackage(),

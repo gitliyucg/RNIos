@@ -5,8 +5,11 @@ import { styles } from "../../static/style/setting_style";
 import Header from "../../common/Header";
 import { option } from "../../common/uploadConfig";
 import ImagePicker from "react-native-image-picker";
+import * as changeActions from '../../actions/lanActions';
+import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
 
-export default class Setting extends Component {
+class Setting extends Component {
 
 	constructor(props) {
 	  	super(props);
@@ -104,16 +107,40 @@ export default class Setting extends Component {
 					</TouchableOpacity>
 					<Text>{ i18n.t('setting.head') }</Text>
 				</View>
-				<TouchableOpacity style={styles.cache}>
+				<TouchableOpacity style={styles.cache} onPress={() => {
+					Alert.alert(
+                        i18n.t('setting.alert'),
+                        i18n.t('setting.text'),
+                        [
+                            {text: 'OK', onPress: () => {
+                            	if (LAN) {
+				                    this.props.actions.changeZh()
+				                }else{
+				                    this.props.actions.changeEn()
+				                }
+                            }},
+                        ],
+                        { cancelable: false }
+                    )
+					
+				}}>
 					<Text style={styles.cachetext}>{i18n.t('setting.cache')}</Text>
 					<Image style={styles.cacheicon} source={require('../../static/images/icon/right.png')}/>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.logout} onPress={ this.loginOut }>
 					<Text style={styles.logouttext}>{i18n.t('setting.logout')}</Text>
 				</TouchableOpacity>
-				<Text style={styles.version}>4.3.3</Text>
+				<Text style={styles.version}>1.0.1</Text>
 			</View>
 		);
 	}
 
 }
+
+export default connect(state => ({
+        state: state.changelan
+    }),
+    (dispatch) => ({
+        actions: bindActionCreators(changeActions, dispatch)
+    })
+)(Setting);

@@ -56,11 +56,10 @@ export let styles = StyleSheet.create({
         width: 15,
         height: 15,
         borderRadius: 15,
-        color: '#fff',
-        fontSize: 10,
-        textAlign: 'center',
+        marginRight: 10,
+        flexDirection: 'row',
         alignItems: 'center',
-        marginRight: 10
+        justifyContent: 'center'
     },
     ddlisttext: {
         fontSize: 10

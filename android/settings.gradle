@@ -1,4 +1,6 @@
-rootProject.name = 'AwesomeProject'
+rootProject.name = 'daishaung'
+include ':rn-splash-screen'
+project(':rn-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/rn-splash-screen/android')
 include ':jpush-react-native'
 project(':jpush-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/jpush-react-native/android')
 include ':jcore-react-native'

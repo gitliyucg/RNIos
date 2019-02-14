@@ -15,6 +15,7 @@ export default class Sign extends Component {
 	  	super(props);
 	
 	  	this.state = {
+	  		ID: null,
 	  		mobile: null,
 	  		name: null,
 	  		bankname: null,
@@ -44,6 +45,7 @@ export default class Sign extends Component {
         }).then( (res) => res.json() ).then( (response) => {
             if(response['err_no'] == 0){
                 this.setState({
+                	ID: response['results']['id'],
                     mobile: response['results']['mobile'],
                     name: response['results']['last_name'] + response['results']['first_name'],
                 })
@@ -67,10 +69,24 @@ export default class Sign extends Component {
 			body: signData({order_id: this.props.orderID})
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
-				console.log(response);
 				this.setState({
 					info: response['results'],
 				})
+				if (this.state.info['set_meal_id'] !== 0) {
+					let from = signData({id: this.state.info['set_meal_id']});
+					from.append('uid', this.state.ID)
+					fetch(API('/set_meal/detail'), {
+						method: 'POST',
+						body: from
+					}).then( (res) => res.json() ).then( (response) => {
+						if(response['err_no'] == 0){
+							this.setState({
+								upList: response['results']['AuthenticationCategorys'],
+								upLength: response['results']['AuthenticationCategorys'].length
+							})
+						}
+					} )
+				}
 			}
 		} )
 		//获取录音 
@@ -86,7 +102,7 @@ export default class Sign extends Component {
 				})
 				audio = new Sound(data['results']['config_name'], null, (error) => {
 					if (error) {
-						return console.log('资源加载失败', error);
+						return false;
 					}
 					let totalTime = audio.getDuration();
 					time = Math.ceil(totalTime);
@@ -96,17 +112,17 @@ export default class Sign extends Component {
 			}
 		} )
 		// 获取上传列表
-		fetch(API('/authenticationscategorys/notauthmust'), {
-			method: 'POST',
-			body: signData()
-		}).then( (res) => res.json() ).then( (response) => {
-			if(response['err_no'] == 0){
-				this.setState({
-					upList: response['results'],
-					upLength: response['results'].length
-				})
-			}
-		} )
+		// fetch(API('/authenticationscategorys/notauthmust'), {
+		// 	method: 'POST',
+		// 	body: signData()
+		// }).then( (res) => res.json() ).then( (response) => {
+		// 	if(response['err_no'] == 0){
+		// 		this.setState({
+		// 			upList: response['results'],
+		// 			upLength: response['results'].length
+		// 		})
+		// 	}
+		// } )
 		// 获取合约图片
 		fetch(API('/system/systemconfigsdetail'), {
 			method: 'POST',
@@ -148,7 +164,7 @@ export default class Sign extends Component {
 	upHtml = () => {
 		return this.state.upList.map( (item, index) => {
 			return(
-				<TouchableOpacity style={styles.uploadchild} onPress={() => this.toUp(item.id, item.name, item.authentication_id)}>
+				<TouchableOpacity style={styles.uploadchild} onPress={() => this.toUp(item.id, LAN ? item.name : item.name_en, item.authentication_id)}>
 					<Text style={{color: '#fff'}}>{item.name}</Text>
 				</TouchableOpacity>
 			)
@@ -201,31 +217,28 @@ export default class Sign extends Component {
 		let up = upArr.every( (item, index, arr) => {
 			return item > 0;
 		} )
-		if(this.state.upLength != 0){
-			if(!up){
-				Alert.alert(i18n.t('sign.alert1'));
-				return false;
-			}
-		}else if(this.state.idPic.length == 0){
+		if(!up){
+			Alert.alert(i18n.t('sign.alert1'));
+			return false;
+		}
+		if(Object.keys(this.state.idPic).length == 0){
 			Alert.alert(i18n.t('sign.alert3'));
 			return false;
-		}else{
-			fetch(API('/sendsms/sendsms'), {
-				method: 'POST',
-				body: signData({
-					mobile: this.state.mobile,
-					contentcode: 'sms_verify_signing'
-				})
-			}).then( (res) => res.json() ).then( (response) => {
-				if(response['err_no'] == 0){
-					console.log(response);
-					Alert.alert(i18n.t('sign.msg'));
-					this.setState({isSign: true})
-				}else{
-					Alert.alert(response['err_msg'])
-				}
-			} )
 		}
+		fetch(API('/sendsms/sendsms'), {
+			method: 'POST',
+			body: signData({
+				mobile: this.state.mobile,
+				contentcode: 'sms_verify_signing'
+			})
+		}).then( (res) => res.json() ).then( (response) => {
+			if(response['err_no'] == 0){
+				Alert.alert(i18n.t('sign.msg'));
+				this.setState({isSign: true})
+			}else{
+				Alert.alert(response['err_msg'])
+			}
+		} )
 	}
 
 	againMsg = () => {
@@ -237,7 +250,6 @@ export default class Sign extends Component {
 			})
 		}).then( (res) => res.json() ).then( (response) => {
 			if(response['err_no'] == 0){
-				console.log(response);
 				Alert.alert(i18n.t('sign.msg'));
 			}else{
 				Alert.alert(response['err_msg'])
@@ -280,9 +292,11 @@ export default class Sign extends Component {
 				<Text style={styles.toptitle}>{i18n.t('sign.title1')}</Text>
 				<View style={styles.listwrap}>
 					{  
-						this.state.info['order_type'] == 0 ? 
-						<Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> : 
-						<Image style={styles.listimg} source={require('../../static/images/listyou.png')} />
+						this.state.info['set_meal_id'] != 0 ? 
+						<Image style={styles.listimg} source={require('../../static/images/listtao.png')} /> :
+						(this.state.info['order_type'] == 0 ? <Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> : 
+						(this.state.info['order_type'] == 1 ? <Image style={styles.listimg} source={require('../../static/images/listyou.png')} /> : null)
+						)
 					}
 					<View style={styles.listcont}>
 						<Text style={styles.listtext}>{this.state.info.price}</Text>

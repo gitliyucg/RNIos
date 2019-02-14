@@ -81,7 +81,10 @@ export default {
 		xlp: '請選擇最高學歷',
 		btn: '下一步',
 		xinxi: '請輸入完整的信息',
-		idnum: '請輸入正確的身份證號碼'
+		idnum: '請輸入正確的身份證號碼',
+		emailalert: '請輸入正確的郵箱地址',
+		agealert: '借款人必須年滿18週歲以及小於100週歲',
+		pricealert: '請填寫5000-50000之間的金額'
 	},
 	loan2: {
 		title1: '住宅資料',
@@ -141,7 +144,9 @@ export default {
 		xinx: '請輸入完整的信息',
 		clfs1: '自動轉賬',
 		clfs2: '現金',
-		clfs3: '支票'
+		clfs3: '支票',
+		phonealert: '請輸入正確的住宅電話',
+		phonealert2: '請輸入正確的辦公室電話'
 	},
 	list: {
 		ed: '額度',
@@ -207,7 +212,9 @@ export default {
 		title: '設置',
 		head: '設置頭像',
 		cache: '清除緩存',
-		logout: '退出登錄'
+		logout: '退出登錄',
+		alert: '提示',
+		text: '清除成功',
 	},
 	renzheng: {
 		title: '我的認證',
@@ -281,7 +288,13 @@ export default {
 		t6: '金額',
 		t7: '日期',
 		t8: '備註',
-		bohui: '駁回理由：'
+		bohui: '駁回理由：',
+		date: '還款日',
+		dateq: '每月',
+		dateh: '號',
+		account: '還款帳戶',
+		number: '還款帳號',
+		bank: '開戶行'
 	},
 	mybank: {
 		title: '我的銀行卡',

@@ -32,6 +32,7 @@ class Loan2 extends Component{
 	  		fsp: i18n.t('loan2.fsp'), //出量方式默认值
 	  		fsarr: [i18n.t('loan2.clfs1'), i18n.t('loan2.clfs2'), i18n.t('loan2.clfs3')],
 	  		xz: i18n.t('loan2.xzp'), //公司业务性质
+	  		xzp: i18n.t('loan2.xzp'), //公司业务性质
 	  		xzarr: [],
 	  		xzvalue: [],
 	  		zy: null, //职业
@@ -119,7 +120,7 @@ class Loan2 extends Component{
 					}
 				} )
 				this.state.fsarr.map( (item, index) => {
-					if(index = parseInt(response['results']['grant']) - 1){
+					if(index == parseInt(response['results']['grant']) - 1){
 						this.setState({
 							fsp: item
 						})
@@ -180,8 +181,8 @@ class Loan2 extends Component{
 				this.state.gsphone == '' ||
 				this.state.sr == null ||
 				this.state.sr == '' ||
-				this.state.fs == i18n.t('loan2.fsp') ||
-				this.state.xz == i18n.t('loan2.xzp') ||
+				this.state.fsp == i18n.t('loan2.fsp') ||
+				this.state.xzp == i18n.t('loan2.xzp') ||
 				this.state.zy == null ||
 				this.state.zy == '' ||
 				this.state.year == null ||
@@ -190,6 +191,12 @@ class Loan2 extends Component{
 				this.state.month == ''
 			){
 				Alert.alert(i18n.t('loan2.xinx'))
+				return false;
+			}else if(this.state.dh.length != 8){
+				Alert.alert(i18n.t('loan2.phonealert'))
+				return false;
+			}else if(this.state.gsphone.length != 8){
+				Alert.alert(i18n.t('loan2.phonealert2'))
 				return false;
 			}else {
 				let params = {
@@ -228,8 +235,8 @@ class Loan2 extends Component{
 				this.state.gsphone == '' ||
 				this.state.sr == null ||
 				this.state.sr == '' ||
-				this.state.fs == i18n.t('loan2.fsp') ||
-				this.state.xz == i18n.t('loan2.xzp') ||
+				this.state.fsp == i18n.t('loan2.fsp') ||
+				this.state.xzp == i18n.t('loan2.xzp') ||
 				this.state.zy == null ||
 				this.state.zy == '' ||
 				this.state.year == null ||
@@ -246,6 +253,12 @@ class Loan2 extends Component{
 				this.state.fuzx == null
 			){
 				Alert.alert(i18n.t('loan2.xinx'))
+				return false;
+			}else if(this.state.dh.length != 8){
+				Alert.alert(i18n.t('loan2.phonealert'))
+				return false;
+			}else if(this.state.gsphone.length != 8){
+				Alert.alert(i18n.t('loan2.phonealert2'))
 				return false;
 			}else if(!this.state.fuzk && this.state.zujin == null || this.state.zujin == ''){
 				// 判断房屋状况是否通过
@@ -300,14 +313,14 @@ class Loan2 extends Component{
 	render(){
 		return(
 			<View>
-				<Header title={this.state.title}/>
+				<Header title={ this.props.listTitle != null ? this.props.listTitle : this.state.title }/>
 				<ScrollView style={{height: scrollViewHeight}}>
 					<View style={styles.loanTitle}>
 						<Text style={styles.loanTitleText}>{ i18n.t('loan2.title1') }</Text>
 					</View>
 					{/*住宅地址*/}
 					<View style={styles.textareawrapb}>
-						<Text style={styles.label}>{ i18n.t('loan2.dz') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.dz') }</Text>
 						<View style={styles.textbottom}>
 							<TextInput style={styles.textarea} multiline={true} defaultValue={this.state.dz} onChangeText={ (value) => this.setState({dz: value}) } placeholder={ i18n.t('loan2.dzp') }/>
 							<Text style={styles.textbottomcont}>{i18n.t('loan2.dztext')}</Text>
@@ -318,15 +331,15 @@ class Loan2 extends Component{
 					</View>
 					{/*住宅电话*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.dh') }</Text>
-						<TextInput style={styles.input} value={this.state.dh} onChangeText={ (value) => this.setState({dh: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.dhp') }/>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.dh') }</Text>
+						<TextInput maxLength={8} style={styles.input} value={this.state.dh} onChangeText={ (value) => this.setState({dh: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.dhp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.dh != null && this.state.dh != '' ? succIcon : null }
 						</View>
 					</View>
 					{/*住宅状况*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.zk') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.zk') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.zkp }
@@ -347,7 +360,7 @@ class Loan2 extends Component{
 					</View>
 					{/*按揭供款*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.gk') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.gk') }</Text>
 						<TextInput style={styles.input} value={this.state.gk} onChangeText={ (value) => this.setState({gk: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gkp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.gk != null && this.state.gk != '' ? succIcon : null }
@@ -360,7 +373,7 @@ class Loan2 extends Component{
 						</View>
 						{/*住宅地址*/}
 						<View style={styles.textareawrapb}>
-							<Text style={styles.label}>{ i18n.t('loan2.dydz') }</Text>
+							<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.dydz') }</Text>
 							<View style={styles.textbottom}>
 								<TextInput style={styles.textarea} multiline={true} defaultValue={this.state.dydz} onChangeText={ (value) => this.setState({dydz: value}) } placeholder={ i18n.t('loan2.dydzp') }/>
 								<Text style={styles.textbottomcont}>{i18n.t('loan2.dytext')}</Text>
@@ -371,7 +384,7 @@ class Loan2 extends Component{
 						</View>
 						{/*房屋面积*/}
 						<View style={styles.inputwrap}>
-							<Text style={styles.label}>{ i18n.t('loan2.mj') }</Text>
+							<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.mj') }</Text>
 							<TextInput style={styles.input} value={this.state.mj} onChangeText={ (value) => this.setState({mj: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.mjp') }/>
 							<View style={styles.stateiconwrap}> 
 								{ this.state.mj != null && this.state.mj != '' ? succIcon : null }
@@ -379,7 +392,7 @@ class Loan2 extends Component{
 						</View>
 						{/*楼龄*/}
 						<View style={styles.inputwrap}>
-							<Text style={styles.label}>{ i18n.t('loan2.ll') }</Text>
+							<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.ll') }</Text>
 							<TextInput style={styles.input} value={this.state.ll} onChangeText={ (value) => this.setState({ll: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.llp') }/>
 							<View style={styles.stateiconwrap}> 
 								{ this.state.ll != null && this.state.ll != '' ? succIcon : null }
@@ -387,7 +400,7 @@ class Loan2 extends Component{
 						</View>
 						{/*房屋状况*/}
 						<View style={[styles.inputwrap, {marginTop: 10, marginBottom: 10}]}>
-							<Text style={styles.label}>{ i18n.t('loan2.fuzk') }</Text>
+							<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.fuzk') }</Text>
 							{/*单选框*/}
 							<View style={styles.radioWrap}>
 								<TouchableOpacity style={styles.radiotabtwo} onPress={ () => {this.setState({fuzk: true, zujin: null})} }>
@@ -421,7 +434,7 @@ class Loan2 extends Component{
 						</View>
 						{/*債項*/}
 						<View style={[styles.inputwrapzx, {marginTop: 10, marginBottom: 10}]}>
-							<Text style={styles.label}>{ i18n.t('loan2.fuzx') }</Text>
+							<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.fuzx') }</Text>
 							{/*单选框*/}
 							<View style={{flex: 1, flexDirection: 'column'}}>
 								<View style={styles.radioWrap}>
@@ -533,7 +546,7 @@ class Loan2 extends Component{
 					</View>
 					{/*自僱人士*/}
 					<View style={[styles.inputwrap, {marginTop: 10, marginBottom: 10}]}>
-						<Text style={styles.label}>{ i18n.t('loan2.zg') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.zg') }</Text>
 						{/*单选框*/}
 						<View style={styles.radioWrap}>
 							<TouchableOpacity style={styles.radiotab} onPress={ () => {this.setState({isZg: true})} }>
@@ -555,7 +568,7 @@ class Loan2 extends Component{
 					</View>
 					{/*公司名稱*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.gsname') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.gsname') }</Text>
 						<TextInput defaultValue={this.state.gsname} style={styles.input} onChangeText={ (value) => this.setState({gsname: value}) } placeholder={ i18n.t('loan2.gsnamep') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.gsname !== null && this.state.gsname != '' ? succIcon : null }
@@ -563,7 +576,7 @@ class Loan2 extends Component{
 					</View>
 					{/*办公室地址*/}
 					<View style={styles.textareawrapb}>
-						<Text style={styles.label}>{ i18n.t('loan2.gsdz') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.gsdz') }</Text>
 						<View style={styles.textbottom}>
 							<TextInput style={styles.textarea} multiline={true} defaultValue={this.state.gsdz} onChangeText={ (value) => this.setState({gsdz: value}) } placeholder={ i18n.t('loan2.gsdzp') }/>
 							<Text style={styles.textbottomcont}>{i18n.t('loan2.dztext')}</Text>
@@ -574,15 +587,15 @@ class Loan2 extends Component{
 					</View>
 					{/*公司电话*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.gsphone') }</Text>
-						<TextInput style={styles.input} value={this.state.gsphone} onChangeText={ (value) => this.setState({gsphone: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gsphonep') }/>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.gsphone') }</Text>
+						<TextInput maxLength={8} style={styles.input} value={this.state.gsphone} onChangeText={ (value) => this.setState({gsphone: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.gsphonep') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.gsphone != null && this.state.gsphone != '' ? succIcon : null }
 						</View>
 					</View>
 					{/*收入*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.sr') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.sr') }</Text>
 						<TextInput style={styles.input} value={this.state.sr} onChangeText={ (value) => this.setState({sr: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.srp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.sr != null && this.state.sr != '' ? succIcon : null }
@@ -590,7 +603,7 @@ class Loan2 extends Component{
 					</View>
 					{/*收款方式*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.fs') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.fs') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.fsp }
@@ -598,7 +611,7 @@ class Loan2 extends Component{
 							dropdownStyle={styles.selectwrap}
 							options={this.state.fsarr}
 							onSelect={ (index, value) => {
-								this.setState({fs: parseInt(index) + 1})
+								this.setState({fs: parseInt(index) + 1, fsp: value})
 							} }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.fsp == i18n.t('loan2.fsp') ? null : succIcon }
@@ -606,7 +619,7 @@ class Loan2 extends Component{
 					</View>
 					{/*公司性质*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.xz') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.xz') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.xzp }
@@ -627,7 +640,7 @@ class Loan2 extends Component{
 					</View>
 					{/*职业*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan2.zy') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.zy') }</Text>
 						<TextInput defaultValue={this.state.zy} style={styles.input} onChangeText={ (value) => this.setState({zy: value}) } placeholder={ i18n.t('loan2.zyp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.zy !== null && this.state.zy !== '' ? succIcon : null }
@@ -635,15 +648,15 @@ class Loan2 extends Component{
 					</View>
 					{/*工作时间*/}
 					<View style={styles.inputwrapyear}>
-						<Text style={styles.label}>{ i18n.t('loan2.gz') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan2.gz') }</Text>
 						<View style={styles.yearwrap}>
 							<View style={{flexDirection: 'row'}}>
 								<View style={styles.y}>
-									<TextInput value={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
+									<TextInput value={this.state.year} style={styles.y_input} onChangeText={ (value) => this.setState({year: value.replace(number, '') > 100 ? 0 : value.replace(number, '') }) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
 									<Text>年</Text>
 								</View>
 								<View style={styles.m}>
-									<TextInput value={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
+									<TextInput value={this.state.month} style={styles.m_input} onChangeText={ (value) => this.setState({month: value.replace(number, '') > 12 ? 0 : value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan2.zyp') }/>
 									<Text>月</Text>
 								</View>
 							</View>

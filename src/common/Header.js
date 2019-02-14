@@ -61,10 +61,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: gDevice.android ? 46 : 46 + statusBarHeight,
         backgroundColor: '#f8f8f6',
-        alignItems: 'center',
+        alignItems: gDevice.ios ? 'flex-end' : 'center',
         justifyContent: 'flex-start',
+        // alignItems:'flex-end',
         borderBottomWidth: 1,
         borderBottomColor: '#d6d6d6',
+        paddingBottom: gDevice.ios ? 10 : 0
     },
     return: {
         flex: 1
@@ -78,6 +80,8 @@ const styles = StyleSheet.create({
         height: 20,
     },
     headerReturnText: {
+        height: 20,
+        lineHeight: 20
     },
     title: {
         flex: 1,

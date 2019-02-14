@@ -1,5 +1,5 @@
 {
-  "name": "AwesomeProject",
+  "name": "daishaung",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,11 +21,13 @@
     "react-native-image-zoom-viewer": "^2.2.24",
     "react-native-modal-dropdown": "^0.6.2",
     "react-native-pullview": "^1.0.7",
+    "react-native-rename": "^2.4.0",
     "react-native-router-flux": "^4.0.6",
     "react-native-sound": "^0.10.9",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "rn-splash-screen": "^5.2.0"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

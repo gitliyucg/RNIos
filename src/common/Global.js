@@ -58,46 +58,96 @@ global.phone = (phoneNum) => {
     return true;
 }
 
+// 全局验证邮箱格式
+global.Email = (email) => {
+    // ^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$
+    if(email.indexOf('@') != -1){
+        return true;
+    }else{
+        return false;
+    }
+}
+
 // 全局验证输入框只能输入纯数字
 global.number = /[^\d]+/;
 
 // 全局正则表达式验证香港身份证
 global.HKID = (str) => {
     var strValidChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-     // basic check length
-     if (str.length < 8)
-     return false;
-     // handling bracket
-     if (str.charAt(str.length-3) == '(' && str.charAt(str.length-1) == ')')
-     str = str.substring(0, str.length - 3) + str.charAt(str.length -2);
-     // convert to upper case
-     str = str.toUpperCase();
-     // regular expression to check pattern and split
-     var hkidPat = /^([A-Z]{1,2})([0-9]{6})([A0-9])$/;
-     var matchArray = str.match(hkidPat);
-     // not match, return false
-     if (matchArray == null)
-     return false;
-     // the character part, numeric part and check digit part
-     var charPart = matchArray[1];
-     var numPart = matchArray[2];
-     var checkDigit = matchArray[3];
-     // calculate the checksum for character part
-     var checkSum = 0;
-     if (charPart.length == 2) {
-     checkSum += 9 * (10 + strValidChars.indexOf(charPart.charAt(0)));
-     checkSum += 8 * (10 + strValidChars.indexOf(charPart.charAt(1)));
-     } else {
-     checkSum += 9 * 36;
-     checkSum += 8 * (10 + strValidChars.indexOf(charPart));
-     }
-     // calculate the checksum for numeric part
-     for (var i = 0, j = 7; i < numPart.length; i++, j--)
-     checkSum += j * numPart.charAt(i);
-     // verify the check digit
-     var remaining = checkSum % 11;
-     var verify = remaining == 0 ? 0 : 11 - remaining;
-     return verify == checkDigit || (verify == 10 && checkDigit == 'A');
+    // basic check length
+    if (str.length < 8)
+        return false;
+    // handling bracket
+    if (str.charAt(str.length-3) == '(' && str.charAt(str.length-1) == ')')
+        str = str.substring(0, str.length - 3) + str.charAt(str.length -2);
+    // convert to upper case
+    str = str.toUpperCase();
+    // regular expression to check pattern and split
+    var hkidPat = /^([A-Z]{1,2})([0-9]{6})([A0-9])$/;
+    var matchArray = str.match(hkidPat);
+    // not match, return false
+    if (matchArray == null)
+        return false;
+    // the character part, numeric part and check digit part
+    var charPart = matchArray[1];
+    var numPart = matchArray[2];
+    var checkDigit = matchArray[3];
+    // calculate the checksum for character part
+    var checkSum = 0;
+    if (charPart.length == 2) {
+        checkSum += 9 * (10 + strValidChars.indexOf(charPart.charAt(0)));
+        checkSum += 8 * (10 + strValidChars.indexOf(charPart.charAt(1)));
+    } else {
+        checkSum += 9 * 36;
+        checkSum += 8 * (10 + strValidChars.indexOf(charPart));
+    }
+    // calculate the checksum for numeric part
+    for (var i = 0, j = 7; i < numPart.length; i++, j--)
+        checkSum += j * numPart.charAt(i);
+    // verify the check digit
+    var remaining = checkSum % 11;
+    var verify = remaining == 0 ? 0 : 11 - remaining;
+    return verify == checkDigit || (verify == 10 && checkDigit == 'A');
+}
+
+// 根据出生年月日判断年龄
+global.GetAge = (strBirthday) => {       
+    var returnAge;
+    var strBirthdayArr = strBirthday.split("-");
+    var birthYear = strBirthdayArr[0];
+    var birthMonth = strBirthdayArr[1];
+    var birthDay = strBirthdayArr[2];
+    
+    d = new Date();
+    var nowYear = d.getFullYear();
+    var nowMonth = d.getMonth() + 1;
+    var nowDay = d.getDate();
+    
+    if(nowYear == birthYear){
+        returnAge = 0;//同年 则为0岁
+    }else{
+        var ageDiff = nowYear - birthYear ; //年之差
+        if(ageDiff > 0){
+            if(nowMonth == birthMonth){
+                var dayDiff = nowDay - birthDay;//日之差
+                if(dayDiff < 0){
+                    returnAge = ageDiff - 1;
+                }else{
+                    returnAge = ageDiff ;
+                }
+            }else{
+                var monthDiff = nowMonth - birthMonth;//月之差
+                if(monthDiff < 0){
+                    returnAge = ageDiff - 1;
+                }else{
+                    returnAge = ageDiff ;
+                }
+            }
+        }else{
+            returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天
+        }
+    }
+    return returnAge;//返回周岁年龄
 }
 
 

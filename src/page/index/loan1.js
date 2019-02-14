@@ -167,6 +167,29 @@ class Loan1 extends Component{
 		}
 	}
 
+	// 身份证触焦事件
+	numberIDFocus = () => {
+		if(this.state.numberID != null || this.state.numberID != ''){
+			let ID = this.state.numberID;
+			if(ID.indexOf('(') > -1){
+				this.setState({
+					numberID: ID.split('(')[0] + ID.split('(')[1].split(')')[0]
+				})
+			}
+		}
+	}
+	// 身份证失焦事件
+	numberIDBlur = () => {
+		if(this.state.numberID != null || this.state.numberID != ''){
+			let ID = this.state.numberID;
+			IDend = ID.substr(ID.length - 1, 1);
+			IDstr = ID.substring(0, ID.length - 1);
+			this.setState({
+				numberID: IDstr + '(' + IDend + ')'
+			})
+		}
+	}
+
 	// 下一步
 	onsubmit = () => {
 		if (this.state.xing == null ||
@@ -183,29 +206,40 @@ class Loan1 extends Component{
 			this.state.emaili == '' ||
 			this.state.gk == i18n.t('loan1.gkp') ||
 			this.state.md == i18n.t('loan1.mdp') ||
-			this.state.xl == i18n.t('loan1.xlp')
+			this.state.xlp == i18n.t('loan1.xlp')
 		) {
 			Alert.alert(i18n.t('loan1.xinxi'));
 			return false;
 		}else if(!HKID(this.state.numberID)){
 			Alert.alert(i18n.t('loan1.idnum'))
 			return false;
-		}else {
-			let params = {
-				order_type: this.state.loanState ? 0 : 1,
-				gender: this.state.isSex ? 1 : 2,
-				birthday: this.state.date + ' 00:00:00',
-				price: this.state.price,
-				loan_stage: this.state.gk,
-				loan_purpose: this.state.md,
-				last_name: this.state.xing,
-				first_name: this.state.name,
-				id_card: this.state.numberID,
-				email: this.state.emaili,
-				is_bankruptcy: this.state.isPochan ? 1 : 0,
-				education: this.state.xl
+		}else if(!Email(this.state.emaili)){
+			Alert.alert(i18n.t('loan1.emailalert'))
+			return false;
+		}else if(GetAge(this.state.date) > 100 || GetAge(this.state.date) < 18){
+			Alert.alert(i18n.t('loan1.agealert'))
+			return false;
+		}else if(this.state.loanState){
+			if(parseInt(this.state.price) < 5000 || parseInt(this.state.price) > 50000){
+				Alert.alert(i18n.t('loan1.pricealert'))
+				return false;
+			}else {
+				let params = {
+					order_type: this.state.loanState ? 0 : 1,
+					gender: this.state.isSex ? 1 : 2,
+					birthday: this.state.date + ' 00:00:00',
+					price: this.state.price,
+					loan_stage: this.state.gk,
+					loan_purpose: this.state.md,
+					last_name: this.state.xing,
+					first_name: this.state.name,
+					id_card: this.state.numberID,
+					email: this.state.emaili,
+					is_bankruptcy: this.state.isPochan ? 1 : 0,
+					education: this.state.xl
+				}
+				Actions.loan2({'titlestate': this.state.title, 'loanstate': this.state.loanState, 'params': params, 'ID': this.props.ID, 'listTitle': this.props.listTitle})
 			}
-			Actions.loan2({'titlestate': this.state.title, 'loanstate': this.state.loanState, 'params': params, 'ID': this.props.ID})
 		}
 		// Actions.loan2({'titlestate': this.state.title, 'loanstate': this.state.loanState})
 	}
@@ -213,14 +247,14 @@ class Loan1 extends Component{
 	render(){
 		return(
 			<View>
-				<Header title={i18n.t(this.state.title)} />
+				<Header title={ this.props.listTitle != null ? this.props.listTitle : i18n.t(this.state.title) } />
 				<ScrollView style={{height: scrollViewHeight}}>
 					<View style={styles.loanTitle}>
 						<Text style={styles.loanTitleText}>{ i18n.t('loan1.title1') }</Text>
 					</View>
 					{/*贷款金额*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.price') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.price') }</Text>
 						<TextInput style={styles.input} editable={ !this.state.isPrice } value={this.state.price} onChangeText={ (value) => this.setState({price: value.replace(number, '')}) } keyboardType="numeric" placeholder={ i18n.t('loan1.pricep') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.price != null && this.state.price != '' ? succIcon : null }
@@ -228,7 +262,7 @@ class Loan1 extends Component{
 					</View>
 					{/*供款期*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.gk') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.gk') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.gk }
@@ -250,7 +284,7 @@ class Loan1 extends Component{
 					</View>
 					{/*目的*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.md') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.md') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.md }
@@ -274,7 +308,7 @@ class Loan1 extends Component{
 					</View>
 					{/*英文姓名*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.xm') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.xm') }</Text>
 						<TextInput defaultValue={this.state.xing} style={styles.inputXing} onChangeText={ (value) => this.setState({xing: value}) } placeholder={ i18n.t('loan1.xp') }/>
 						<TextInput defaultValue={this.state.name} style={styles.inputMing} onChangeText={ (value) => this.setState({name: value}) } placeholder={ i18n.t('loan1.mp') }/>
 						<View style={styles.stateiconwrap}> 
@@ -283,7 +317,7 @@ class Loan1 extends Component{
 					</View>
 					{/*性别*/}
 					<View style={[styles.inputwrap, {marginTop: 10, marginBottom: 10}]}>
-						<Text style={styles.label}>{ i18n.t('loan1.sex') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.sex') }</Text>
 						{/*单选框*/}
 						<View style={styles.radioWrap}>
 							<TouchableOpacity style={styles.radiotab} onPress={ () => this.changeSex(0) }>
@@ -305,15 +339,15 @@ class Loan1 extends Component{
 					</View>
 					{/*身份证号码*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.id') }</Text>
-						<TextInput defaultValue={this.state.numberID} style={styles.input} onChangeText={ (value) => this.setState({numberID: value}) } placeholder={ i18n.t('loan1.idp') }/>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.id') }</Text>
+						<TextInput defaultValue={this.state.numberID} onBlur={ () => this.numberIDBlur() } onFocus={ () => this.numberIDFocus() } style={styles.input} onChangeText={ (value) => this.setState({numberID: value}) } placeholder={ i18n.t('loan1.idp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.numberID !== null && this.state.numberID != '' ? succIcon : null }
 						</View>
 					</View>
 					{/*邮箱*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.em') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.em') }</Text>
 						<TextInput defaultValue={this.state.emaili} style={styles.input} onChangeText={ (value) => this.setState({emaili: value}) } placeholder={ i18n.t('loan1.emp') }/>
 						<View style={styles.stateiconwrap}> 
 							{ this.state.emaili != null && this.state.emaili != '' ? succIcon : null }
@@ -321,7 +355,7 @@ class Loan1 extends Component{
 					</View>
 					{/*出生日期*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.date') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.date') }</Text>
 						<DatePicker
 							style={{flex: 1}}
 							date={this.state.date}
@@ -350,7 +384,7 @@ class Loan1 extends Component{
 					</View>
 					{/*破产记录*/}
 					<View style={[styles.inputpochan, {marginTop: 10, marginBottom: 10}]}>
-						<Text style={styles.label}>{ i18n.t('loan1.po') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.po') }</Text>
 						{/*单选框*/}
 						<View style={styles.pochan}>
 							<View style={styles.radioWrap}>
@@ -375,7 +409,7 @@ class Loan1 extends Component{
 					</View>
 					{/*学历*/}
 					<View style={styles.inputwrap}>
-						<Text style={styles.label}>{ i18n.t('loan1.xueli') }</Text>
+						<Text numberOfLines={5} style={styles.label}>{ i18n.t('loan1.xueli') }</Text>
 						<ModalDropdown
 							textStyle={styles.selectstyle}
 							defaultValue={ this.state.xlp }

@@ -70,9 +70,11 @@ export default class Repayment extends Component {
 				}
 			} }>
 				{
-					item['order_type'] == 0 ? 
-					<Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> :
-					<Image style={styles.listimg} source={require('../../static/images/listyou.png')} />
+					item['set_meal_id'] != 0 ? 
+					<Image style={styles.listimg} source={require('../../static/images/listtao.png')} /> :
+					(item['order_type'] == 0 ? <Image style={styles.listimg} source={require('../../static/images/listwu.png')} /> : 
+					(item['order_type'] == 1 ? <Image style={styles.listimg} source={require('../../static/images/listyou.png')} /> : null)
+					)
 				}
 				<View style={styles.listcont}>
 					<Text style={styles.listtext}>{item.price}</Text>
@@ -82,7 +84,7 @@ export default class Repayment extends Component {
 				<Text style={styles.orderid}>{i18n.t('order.order')}{item.order_id}</Text>
 				{
 					this.state.show ?
-					<View style={styles.zhezhao}><Text style={styles.zhezhaotext}>{this.state.title}</Text></View> : 
+					<View style={styles.zhezhao}><View style={styles.zhezhaotext}><Text style={{fontSize: 20,color: '#000000',}}>{this.state.title}</Text></View></View> : 
 					null
 				}
 			</TouchableOpacity>

@@ -13,8 +13,8 @@ export const option = {
 	takePhotoButtonTitle: i18n.t('uploadConfig.pai'),
 	chooseFromLibraryButtonTitle: i18n.t('uploadConfig.ben'),
 	quality: 1.0,
-	allowEditing: true,
-	noData: false,
+	maxWidth: 500,
+  	maxHeight: 500,
 	storageOptions: {
 		skipBackup: true
 	}

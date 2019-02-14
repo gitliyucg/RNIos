@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, Text, View, Alert, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Alert, Image, TouchableOpacity, ScrollView, RefreshControl, findNodeHandle, UIManager} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { styles } from "../../static/style/main_style";
 import Header from "../../common/Header";
@@ -20,13 +20,19 @@ export default class Main extends Component {
             type4: 0, //已结清
             type5: 0, //已驳回
             thumb: null,
-            pic: null
+            pic: null,
+            refreshing: false
         }
 
     }
 
     componentDidMount(){
         this.get()
+    }
+
+    layout = (e) => {  
+        console.log(e)
+        console.log(HEIGHT);  
     }
 
     get = () => {
@@ -41,6 +47,7 @@ export default class Main extends Component {
                     mobile: response['results']['mobile'],
                     thumb: response['results']['thumb'],
                     pic: response['results']['pic'],
+                    refreshing: false
                 })
             }
         } )
@@ -76,6 +83,7 @@ export default class Main extends Component {
                     type3: type3,
                     type4: type4,
                     type5: type5,
+                    refreshing: false
                 })
                 if(this.state.type2 > 0 && this.props.tost != false){
                     Alert.alert(
@@ -89,6 +97,11 @@ export default class Main extends Component {
                 }
             }
         } )
+    }
+
+    _onRefresh = () => {
+        this.setState({refreshing: true});
+        this.get();
     }
 
     tolist = (ID) => {
@@ -180,121 +193,133 @@ export default class Main extends Component {
                 {/*头部组件*/}
                 <Header title={ i18n.t('main.title') } leftShow="none"/>
                 {/*用户头象及用户名*/}
-                <View style={styles.back}>
-                    <View style={styles.userimgwrap}>
+                <ScrollView
+                    onLayout={({nativeEvent:e})=>this.layout(e)}
+                    style={{height: scrollViewHeight - 50}}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this._onRefresh}
+                        />
+                    }
+                >
+                    <View style={styles.back}>
+                        <View style={styles.userimgwrap}>
+                            {
+                                this.state.thumb == null || this.state.thumb == ''?
+                                <Image style={styles.user} source={require("../../static/images/user.png")}/> :
+                                <Image style={styles.user} source={{uri: this.state.thumb}}/> 
+                            }
+                        </View>
                         {
-                            this.state.thumb == null || this.state.thumb == ''?
-                            <Image style={styles.user} source={require("../../static/images/user.png")}/> :
-                            <Image style={styles.user} source={{uri: this.state.thumb}}/> 
+                            this.state.mobile == null ? 
+                            <Text style={styles.logtext}>{ i18n.t('main.logtext') }</Text> :
+                            <Text style={styles.logtext}>{this.state.mobile}</Text>
                         }
                     </View>
-                    {
-                        this.state.mobile == null ? 
-                        <Text style={styles.logtext}>{ i18n.t('main.logtext') }</Text> :
-                        <Text style={styles.logtext}>{this.state.mobile}</Text>
-                    }
-                </View>
 
-                <View style={[styles.dingdanwrap, bodyContent]}>
-                    <View style={styles.ddtop}>
-                        <Image style={styles.icon} source={require("../../static/images/icon/dingdanx3.png")}/>
-                        <Text style={styles.listtext}>{ i18n.t('main.dd') }</Text>
+                    <View style={[styles.dingdanwrap, bodyContent]}>
+                        <View style={styles.ddtop}>
+                            <Image style={styles.icon} source={require("../../static/images/icon/dingdanx3.png")}/>
+                            <Text style={styles.listtext}>{ i18n.t('main.dd') }</Text>
+                        </View>
+                        <View style={styles.dingdanlist}>
+                                
+                            {/*还款中Start*/}
+                            <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(0) }>
+                                <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
+                                <Image style={styles.ddlisticon} source={require("../../static/images/icon/huankuanx3.png")} />
+                                <View style={styles.ddlistcont}>
+                                    <Text style={styles.ddlisttext}>{ i18n.t('main.hk') }</Text>
+                                    <Text style={styles.ddlisttext}>{ this.state.type1 == 0 ? i18n.t('main.nodata') : this.state.type1 + i18n.t('main.data') }</Text>
+                                </View>
+                                <View style={[styles.ddlistnum, {backgroundColor: '#f6a881',}]}><Text style={{color: '#fff', fontSize: 10}}>{this.state.type1}</Text></View>
+                                <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
+                            </TouchableOpacity>
+                            {/*还款中End*/}
+
+                            {/*待签字Start*/}
+                            <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(1) }>
+                                <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
+                                <Image style={styles.ddlisticon} source={require("../../static/images/icon/dqx3.png")} />
+                                <View style={styles.ddlistcont}>
+                                    <Text style={styles.ddlisttext}>{ i18n.t('main.dq') }</Text>
+                                    <Text style={styles.ddlisttext}>{ this.state.type2 == 0 ? i18n.t('main.nodata') : this.state.type2 + i18n.t('main.data') }</Text>
+                                </View>
+                                <View style={[styles.ddlistnum, {backgroundColor: '#a3c8f2'}]}><Text style={{color: '#fff', fontSize: 10}}>{this.state.type2}</Text></View>
+                                
+                                <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
+                            </TouchableOpacity>
+                            {/*待签字End*/}
+
+                            {/*审核中Start*/}
+                            <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(2) }>
+                                <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
+                                <Image style={styles.ddlisticon} source={require("../../static/images/icon/shx3.png")} />
+                                <View style={styles.ddlistcont}>
+                                    <Text style={styles.ddlisttext}>{ i18n.t('main.sh') }</Text>
+                                    <Text style={styles.ddlisttext}>{ this.state.type3 == 0 ? i18n.t('main.nodata') : this.state.type3 + i18n.t('main.data') }</Text>
+                                </View>
+                                <View style={[styles.ddlistnum, {backgroundColor: '#f6c94c'}]}><Text style={{color: '#fff', fontSize: 10}}>{this.state.type3}</Text></View>
+                                <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
+                            </TouchableOpacity>
+                            {/*审核中End*/}
+
+                            {/*已结清Start*/}
+                            <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(3) }>
+                                <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
+                                <Image style={styles.ddlisticon} source={require("../../static/images/icon/jqx3.png")} />
+                                <View style={styles.ddlistcont}>
+                                    <Text style={styles.ddlisttext}>{ i18n.t('main.yj') }</Text>
+                                    <Text style={styles.ddlisttext}>{ this.state.type4 == 0 ? i18n.t('main.nodata') : this.state.type4 + i18n.t('main.data') }</Text>
+                                </View>
+                                <View style={[styles.ddlistnum, {backgroundColor: '#7bbafd'}]}><Text style={{color: '#fff', fontSize: 10}}>{this.state.type4}</Text></View>
+                                <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
+                            </TouchableOpacity>
+                            {/*已结清End*/}
+
+                            {/*已驳回Start*/}
+                            <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(4) }>
+                                <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
+                                <Image style={styles.ddlisticon} source={require("../../static/images/icon/bhx3.png")} />
+                                <View style={styles.ddlistcont}>
+                                    <Text style={styles.ddlisttext}>{ i18n.t('main.bh') }</Text>
+                                    <Text style={styles.ddlisttext}>{ this.state.type5 == 0 ? i18n.t('main.nodata') : this.state.type5 + i18n.t('main.data') }</Text>
+                                </View>
+                                <View style={[styles.ddlistnum, {backgroundColor: '#e889e7'}]}><Text style={{color: '#fff', fontSize: 10}}>{this.state.type5}</Text></View>
+                                <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
+                            </TouchableOpacity>
+                            {/*已驳回End*/}
+
+                        </View>
                     </View>
-                    <View style={styles.dingdanlist}>
-                            
-                        {/*还款中Start*/}
-                        <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(0) }>
-                            <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
-                            <Image style={styles.ddlisticon} source={require("../../static/images/icon/huankuanx3.png")} />
-                            <View style={styles.ddlistcont}>
-                                <Text style={styles.ddlisttext}>{ i18n.t('main.hk') }</Text>
-                                <Text style={styles.ddlisttext}>{ this.state.type1 == 0 ? i18n.t('main.nodata') : this.state.type1 + i18n.t('main.data') }</Text>
-                            </View>
-                            <Text style={[styles.ddlistnum, {backgroundColor: '#f6a881'}]}>{this.state.type1}</Text>
-                            <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
-                        </TouchableOpacity>
-                        {/*还款中End*/}
 
-                        {/*待签字Start*/}
-                        <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(1) }>
-                            <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
-                            <Image style={styles.ddlisticon} source={require("../../static/images/icon/dqx3.png")} />
-                            <View style={styles.ddlistcont}>
-                                <Text style={styles.ddlisttext}>{ i18n.t('main.dq') }</Text>
-                                <Text style={styles.ddlisttext}>{ this.state.type2 == 0 ? i18n.t('main.nodata') : this.state.type2 + i18n.t('main.data') }</Text>
-                            </View>
-                            <Text style={[styles.ddlistnum, {backgroundColor: '#a3c8f2'}]}>{this.state.type2}</Text>
-                            <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
-                        </TouchableOpacity>
-                        {/*待签字End*/}
-
-                        {/*审核中Start*/}
-                        <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(2) }>
-                            <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
-                            <Image style={styles.ddlisticon} source={require("../../static/images/icon/shx3.png")} />
-                            <View style={styles.ddlistcont}>
-                                <Text style={styles.ddlisttext}>{ i18n.t('main.sh') }</Text>
-                                <Text style={styles.ddlisttext}>{ this.state.type3 == 0 ? i18n.t('main.nodata') : this.state.type3 + i18n.t('main.data') }</Text>
-                            </View>
-                            <Text style={[styles.ddlistnum, {backgroundColor: '#f6c94c'}]}>{this.state.type3}</Text>
-                            <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
-                        </TouchableOpacity>
-                        {/*审核中End*/}
-
-                        {/*已结清Start*/}
-                        <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(3) }>
-                            <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
-                            <Image style={styles.ddlisticon} source={require("../../static/images/icon/jqx3.png")} />
-                            <View style={styles.ddlistcont}>
-                                <Text style={styles.ddlisttext}>{ i18n.t('main.yj') }</Text>
-                                <Text style={styles.ddlisttext}>{ this.state.type4 == 0 ? i18n.t('main.nodata') : this.state.type4 + i18n.t('main.data') }</Text>
-                            </View>
-                            <Text style={[styles.ddlistnum, {backgroundColor: '#7bbafd'}]}>{this.state.type4}</Text>
-                            <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
-                        </TouchableOpacity>
-                        {/*已结清End*/}
-
-                        {/*已驳回Start*/}
-                        <TouchableOpacity style={styles.dlistwrap} onPress={ () => this.tolist(4) }>
-                            <Image style={styles.xian} source={require("../../static/images/icon/sxx3.png")} />
-                            <Image style={styles.ddlisticon} source={require("../../static/images/icon/bhx3.png")} />
-                            <View style={styles.ddlistcont}>
-                                <Text style={styles.ddlisttext}>{ i18n.t('main.bh') }</Text>
-                                <Text style={styles.ddlisttext}>{ this.state.type5 == 0 ? i18n.t('main.nodata') : this.state.type5 + i18n.t('main.data') }</Text>
-                            </View>
-                            <Text style={[styles.ddlistnum, {backgroundColor: '#e889e7'}]}>{this.state.type5}</Text>
-                            <Image style={styles.ddlistrighticon} source={require("../../static/images/icon/right.png")}/>
-                        </TouchableOpacity>
-                        {/*已驳回End*/}
-
+                    <View style={[bodyContent, styles.listwrap]}>
+                        <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(5) }>
+                            <Image style={styles.icon} source={require("../../static/images/icon/dingdanx3.png")}/>
+                            <Text style={styles.listtext}>{ i18n.t('main.rz') }</Text>
+                            <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
+                        </TouchableOpacity>        
+                        <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(6) }>
+                            <Image style={styles.icon} source={require("../../static/images/icon/kax3.png")}/>
+                            <Text style={styles.listtext}>{ i18n.t('main.ka') }</Text>
+                            <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
+                        </TouchableOpacity>                                    
                     </View>
-                </View>
 
-                <View style={[bodyContent, styles.listwrap]}>
-                    <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(5) }>
-                        <Image style={styles.icon} source={require("../../static/images/icon/dingdanx3.png")}/>
-                        <Text style={styles.listtext}>{ i18n.t('main.rz') }</Text>
-                        <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
-                    </TouchableOpacity>        
-                    <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(6) }>
-                        <Image style={styles.icon} source={require("../../static/images/icon/kax3.png")}/>
-                        <Text style={styles.listtext}>{ i18n.t('main.ka') }</Text>
-                        <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
-                    </TouchableOpacity>                                    
-                </View>
-
-                <View style={[bodyContent, styles.listwrap]}>
-                    <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(7) }>
-                        <Image style={styles.icon} source={require("../../static/images/icon/settingx3.png")}/>
-                        <Text style={styles.listtext}>{ i18n.t('main.setting') }</Text>
-                        <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
-                    </TouchableOpacity>        
-                    <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(8) }>
-                        <Image style={styles.icon} source={require("../../static/images/icon/aboutx3.png")}/>
-                        <Text style={styles.listtext}>{ i18n.t('main.about') }</Text>
-                        <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
-                    </TouchableOpacity>                                    
-                </View>
+                    <View style={[bodyContent, styles.listwrap]}>
+                        <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(7) }>
+                            <Image style={styles.icon} source={require("../../static/images/icon/settingx3.png")}/>
+                            <Text style={styles.listtext}>{ i18n.t('main.setting') }</Text>
+                            <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
+                        </TouchableOpacity>        
+                        <TouchableOpacity style={styles.listchild} onPress={ () => this.tolist(8) }>
+                            <Image style={styles.icon} source={require("../../static/images/icon/aboutx3.png")}/>
+                            <Text style={styles.listtext}>{ i18n.t('main.about') }</Text>
+                            <Image style={styles.righticon} source={require("../../static/images/icon/right.png")}/>
+                        </TouchableOpacity>                                    
+                    </View>
+                </ScrollView>
             </View>
         ); 
     }

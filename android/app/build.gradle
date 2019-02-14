@@ -98,7 +98,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.awesomeproject"
+        applicationId "com.rnandroid.daishuangapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -151,6 +151,7 @@ android {
 }
 
 dependencies {
+    compile project(':rn-splash-screen')
     compile project(':jpush-react-native')  // 添加 jpush 依赖
     compile project(':jcore-react-native')  // 添加 jcore 依赖
     implementation project(':jcore-react-native')
